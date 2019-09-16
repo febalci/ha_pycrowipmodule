@@ -1,0 +1,81 @@
+crowipmodule:
+  host: 192.168.1.10
+  code: '0000'
+  port: 5002
+  keepalive_interval: 60
+  timeout: 20
+  areas:
+    1:
+      name: 'Home'
+    2:
+      name: 'None'
+  zones:
+    1:
+      name: 'Entrance'
+      type: 'motion'
+    2:
+      name: 'Terrace'
+      type: 'door'
+    3:
+      name: 'Kitchen Window'
+      type: 'window'
+    4:
+      name: 'Kitchen Door'
+      type: 'door'
+    5:
+      name: 'Kitchen Motion'
+      type: 'motion'
+    6:
+      name: 'Bedroom Motion'
+      type: 'motion'
+    7:
+      name: 'Child Room'
+      type: 'door'
+    8:
+      name: 'Child Window Wireless'
+      type: 'window'
+    9:
+      name: 'Child PIR'
+      type: 'motion'
+    10:
+      name: 'Den Motion'
+      type: 'motion'
+    11:
+      name: 'Guest Motion'
+      type: 'motion'
+    12:
+      name: 'Hall Motion'
+      type: 'motion'
+    13:
+      name: 'Hobby Motion'
+      type: 'motion'
+    14:
+      name: 'Bedroom Door'
+      type: 'door'
+    15:
+      name: 'Guest Door'
+      type: 'door'
+    16:
+      name: 'Exit Wireless'
+      type: 'door'
+  system:
+    1:
+      name: 'mains'
+    2:
+      name: 'battery'
+    3:
+      name: 'tamper'
+    4:
+      name: 'line'
+    5:
+      name: 'dialler'
+    6:
+      name: 'ready'
+    7:
+      name: 'fuse'
+    8:
+      name: 'zonebattery'
+    9:
+      name: 'pendantbattery'
+    10:
+      name: 'codetamper'
