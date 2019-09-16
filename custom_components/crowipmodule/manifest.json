@@ -1,0 +1,12 @@
+{
+    "domain": "crowipmodule",
+    "name": "Crow/AAP Alarm IP Module",
+    "documentation": "https://www.example.com",
+    "requirements": [
+        "pycrowipmodule==0.1"
+      ],    
+    "dependencies": [],
+    "codeowners": [
+        "@febalci"
+    ]
+}
