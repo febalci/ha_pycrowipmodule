@@ -1,7 +1,7 @@
 {
     "domain": "crowipmodule",
     "name": "Crow/AAP Alarm IP Module",
-    "documentation": "https://www.example.com",
+    "documentation": "https://github.com/febalci/ha_pycrowipmodule",
     "requirements": [
         "pycrowipmodule==0.12"
       ],    
