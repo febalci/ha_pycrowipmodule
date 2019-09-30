@@ -80,6 +80,11 @@ class CrowIPModuleBinarySensor(CrowIPModuleDevice, BinarySensorDevice):
         """Return the class of this sensor, from DEVICE_CLASSES."""
         return self._zone_type
 
+    @property
+    def device_state_attributes(self):
+        """Return the state attributes."""
+        return self._info["status"]
+
     @callback
     def _update_callback(self, zone):
         """Update the zone's state, if needed."""

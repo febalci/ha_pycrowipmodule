@@ -79,5 +79,5 @@ class CrowIPModuleSensor(CrowIPModuleDevice, Entity):
         _LOGGER.debug("Area: %s", str(self._area_number))
         _LOGGER.debug("Area Number: %s", str(area))
 
-        if area is None or area == self._area_number: #ValueError: invalid literal for int() with base 10: 'A'
+        if area is None or area == self._area_number:
             self.async_schedule_update_ha_state()
