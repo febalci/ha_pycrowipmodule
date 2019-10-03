@@ -20,7 +20,6 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Perform the setup for Crow IP Module  Sensor devices."""
     configured_partitions = discovery_info["areas"]
-
     devices = []
     for part_num in configured_partitions:
         device_config_data = AREA_SCHEMA(configured_partitions[part_num])
@@ -66,8 +65,8 @@ class CrowIPModuleSensor(CrowIPModuleDevice, Entity):
     @property
     def state(self):
         """Return the overall state."""
-        return self._info["status"]["last_disarmed_by_user"] #name (alpha)
-
+        return self._info["status"]["alarm_zone"]
+ 
     @property
     def device_state_attributes(self):
         """Return the state attributes."""

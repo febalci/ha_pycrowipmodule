@@ -138,17 +138,11 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanel):
 
     async def async_alarm_arm_home(self, code=None):
         """Send arm home command."""
-        if code:
-            self.hass.data[DATA_CRW].arm_stay()
-        else:
-            self.hass.data[DATA_CRW].arm_stay()
+        self.hass.data[DATA_CRW].arm_stay()
 
     async def async_alarm_arm_away(self, code=None):
         """Send arm away command."""
-        if code:
-            self.hass.data[DATA_CRW].arm_away()
-        else:
-            self.hass.data[DATA_CRW].arm_away()
+        self.hass.data[DATA_CRW].arm_away()
 
     async def async_alarm_trigger(self, code=None):
         """Alarm trigger command. Will be used to trigger a panic alarm."""
