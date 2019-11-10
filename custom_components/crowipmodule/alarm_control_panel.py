@@ -24,6 +24,7 @@ from . import (
     AREA_SCHEMA,
     SIGNAL_KEYPAD_UPDATE,
     SIGNAL_AREA_UPDATE,
+    SIGNAL_SYSTEM_UPDATE,
     CrowIPModuleDevice,
 )
 
@@ -42,7 +43,6 @@ ALARM_KEYPRESS_SCHEMA = vol.Schema(
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Perform the setup for Crow IP Module alarm panels."""
     configured_areas = discovery_info["areas"]
-    code = discovery_info[CONF_CODE]
 
     devices = []
     for part_num in configured_areas:
@@ -51,8 +51,9 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
             hass,
             part_num,
             device_config_data[CONF_AREANAME],
-            code,
+            device_config_data[CONF_CODE],
             hass.data[DATA_CRW].area_state[part_num],
+            hass.data[DATA_CRW].system_state,
             hass.data[DATA_CRW],
         )
         devices.append(device)
@@ -86,7 +87,7 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanel):
     """Representation of an Crow IP Module-based alarm panel."""
 
     def __init__(
-        self, hass, area_number, alarm_name, code, info, controller):
+        self, hass, area_number, alarm_name, code, info, systeminfo, controller):
         """Initialize the alarm panel."""
         if area_number==1:
             self._area_number = 'A'
@@ -96,6 +97,7 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanel):
 
         _LOGGER.debug("Setting up alarm: %s", alarm_name)
         super().__init__(alarm_name, info, controller)
+        self._systeminfo = systeminfo
 
     async def async_added_to_hass(self):
         """Register callbacks."""
@@ -103,12 +105,21 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanel):
         async_dispatcher_connect(
             self.hass, SIGNAL_AREA_UPDATE, self._update_callback
         )
+        async_dispatcher_connect(self.hass, SIGNAL_SYSTEM_UPDATE, self._update_callback)
 
     @callback
     def _update_callback(self, area):
         """Update Home Assistant state, if needed."""
         if area is None or area == self._area_number:
             self.async_schedule_update_ha_state()
+
+    """Required to show up Keypad on alarm panel"""
+    @property
+    def code_format(self):
+        """Regex for code format or None if no code is required."""
+        if self._code != '':
+            return None
+        return alarm.FORMAT_NUMBER
 
     @property
     def state(self):
@@ -142,16 +153,26 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanel):
 
     async def async_alarm_arm_away(self, code=None):
         """Send arm away command."""
-        self.hass.data[DATA_CRW].arm_away()
+
+        if code:
+            self.hass.data[DATA_CRW].send_keypress(str(code))
+        else:
+            self.hass.data[DATA_CRW].send_keypress(str(self._code))
+#            self.hass.data[DATA_CRW].arm_away()
 
     async def async_alarm_trigger(self, code=None):
         """Alarm trigger command. Will be used to trigger a panic alarm."""
         self.hass.data[DATA_CRW].panic_alarm('')
 
+    @property
+    def device_state_attributes(self):
+        """Return the state attributes."""
+        attr = self._info["status"]
+        attr.update(self._systeminfo['status'])
+        return attr
+
     @callback
     def async_alarm_keypress(self, keypress=None):
         """Send custom keypress."""
         if keypress:
-            self.hass.data[DATA_CRW].keypresses_to_area(
-                self._area_number, keypress
-            )
+            self.hass.data[DATA_CRW].send_keypress(str(keypress))

@@ -1,0 +1,5 @@
+v.0.22
+System binary sensors are converted to alarm control panel device attributes
+If 'code' configuration is missing in configuration.yaml, then keypad is on in Alarm Panel.
+'code' configuration is moved to 'areas' section for area specific code.
+corrected some errors

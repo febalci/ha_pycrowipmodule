@@ -75,8 +75,5 @@ class CrowIPModuleSensor(CrowIPModuleDevice, Entity):
     @callback
     def _update_callback(self, area):
         """Update the partition state in HA, if needed."""
-        _LOGGER.debug("Area: %s", str(self._area_number))
-        _LOGGER.debug("Area Number: %s", str(area))
-
         if area is None or area == self._area_number:
             self.async_schedule_update_ha_state()
