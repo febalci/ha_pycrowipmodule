@@ -17,6 +17,8 @@ from homeassistant.core import callback
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
+import copy 
+
 from . import (
     CONF_CODE,
     CONF_AREANAME,
@@ -167,7 +169,7 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanel):
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
-        attr = self._info["status"]
+        attr = copy.deepcopy(self._info["status"])
         attr.update(self._systeminfo['status'])
         return attr
 
