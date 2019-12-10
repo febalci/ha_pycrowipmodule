@@ -17,8 +17,6 @@ from homeassistant.core import callback
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
-import copy 
-
 from . import (
     CONF_CODE,
     CONF_AREANAME,
@@ -26,7 +24,6 @@ from . import (
     AREA_SCHEMA,
     SIGNAL_KEYPAD_UPDATE,
     SIGNAL_AREA_UPDATE,
-    SIGNAL_SYSTEM_UPDATE,
     CrowIPModuleDevice,
 )
 
@@ -45,7 +42,7 @@ ALARM_KEYPRESS_SCHEMA = vol.Schema(
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Perform the setup for Crow IP Module alarm panels."""
     configured_areas = discovery_info["areas"]
-
+    # config['crowipmodule']['zones'][i]['name']
     devices = []
     for part_num in configured_areas:
         device_config_data = AREA_SCHEMA(configured_areas[part_num])
@@ -55,7 +52,6 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
             device_config_data[CONF_AREANAME],
             device_config_data[CONF_CODE],
             hass.data[DATA_CRW].area_state[part_num],
-            hass.data[DATA_CRW].system_state,
             hass.data[DATA_CRW],
         )
         devices.append(device)
@@ -89,7 +85,7 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanel):
     """Representation of an Crow IP Module-based alarm panel."""
 
     def __init__(
-        self, hass, area_number, alarm_name, code, info, systeminfo, controller):
+        self, hass, area_number, alarm_name, code, info, controller):
         """Initialize the alarm panel."""
         if area_number==1:
             self._area_number = 'A'
@@ -99,7 +95,6 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanel):
 
         _LOGGER.debug("Setting up alarm: %s", alarm_name)
         super().__init__(alarm_name, info, controller)
-        self._systeminfo = systeminfo
 
     async def async_added_to_hass(self):
         """Register callbacks."""
@@ -107,7 +102,6 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanel):
         async_dispatcher_connect(
             self.hass, SIGNAL_AREA_UPDATE, self._update_callback
         )
-        async_dispatcher_connect(self.hass, SIGNAL_SYSTEM_UPDATE, self._update_callback)
 
     @callback
     def _update_callback(self, area):
@@ -169,9 +163,7 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanel):
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
-        attr = copy.deepcopy(self._info["status"])
-        attr.update(self._systeminfo['status'])
-        return attr
+        return self._info["status"]
 
     @callback
     def async_alarm_keypress(self, keypress=None):
