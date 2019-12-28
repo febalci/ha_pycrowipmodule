@@ -9,6 +9,11 @@ crowipmodule:
     2:
       name: 'None'
       code: '0001'
+  outputs:
+    3:
+      name: 'Door 1'
+    4:
+      name: 'Smoke Detector Power'
   zones:
     1:
       name: 'Entrance'
