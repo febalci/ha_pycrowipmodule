@@ -25,6 +25,8 @@ CONF_AREAS = "areas"
 CONF_ZONENAME = "name"
 CONF_ZONES = "zones"
 CONF_ZONETYPE = "type"
+CONF_OUTPUTS = "outputs"
+CONF_OUTPUTNAME = "name"
 
 DEFAULT_PORT = 5002
 DEFAULT_KEEPALIVE = 60
@@ -37,6 +39,11 @@ SIGNAL_SYSTEM_UPDATE = "crowipmodule.system_updated"
 SIGNAL_OUTPUT_UPDATE = "crowipmodule.output_updated"
 SIGNAL_KEYPAD_UPDATE = "crowipmodule.keypad_updated"
 
+OUTPUT_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_OUTPUTNAME): cv.string,
+    }
+)
 ZONE_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_ZONENAME): cv.string,
@@ -59,6 +66,7 @@ CONFIG_SCHEMA = vol.Schema(
                 vol.Required(CONF_HOST): cv.string,
                 vol.Optional(CONF_ZONES): {vol.Coerce(int): ZONE_SCHEMA},
                 vol.Optional(CONF_AREAS): {vol.Coerce(int): AREA_SCHEMA},
+                vol.Optional(CONF_OUTPUTS): {vol.Coerce(int): OUTPUT_SCHEMA},
                 vol.Optional(CONF_CROW_PORT, default=DEFAULT_PORT): cv.port,
                 vol.Optional(CONF_CROW_KEEPALIVE, default=DEFAULT_KEEPALIVE): vol.All(
                     vol.Coerce(int), vol.Range(min=15)
@@ -81,6 +89,7 @@ async def async_setup(hass, config):
     keep_alive = conf.get(CONF_CROW_KEEPALIVE)
     zones = conf.get(CONF_ZONES)
     areas = conf.get(CONF_AREAS)
+    outputs = conf.get(CONF_OUTPUTS)
     connection_timeout = conf.get(CONF_TIMEOUT)
     sync_connect = asyncio.Future()
 
@@ -176,7 +185,6 @@ async def async_setup(hass, config):
                 config,
             )
         )
-
         
     if zones:
         hass.async_create_task(
@@ -185,6 +193,17 @@ async def async_setup(hass, config):
                 "binary_sensor", 
                 "crowipmodule", 
                 {CONF_ZONES: zones}, 
+                config,
+            )
+        )
+
+    if outputs:
+        hass.async_create_task(
+            async_load_platform(
+                hass, 
+                "switch", 
+                "crowipmodule", 
+                {CONF_OUTPUTS: outputs}, 
                 config,
             )
         )

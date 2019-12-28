@@ -10,3 +10,6 @@ v.0.24
 - Removed sensor.area_a_keypad and added sensor.crow_alarm_system; this new sensor has all system related attributes only.
 - Handle trigger based disconnection issue
 - Corrected some issues.
+v.0.25
+- Corrected HA 103 breaking changes made on alarm_control_panel
+- Outputs controlling and status corrected.

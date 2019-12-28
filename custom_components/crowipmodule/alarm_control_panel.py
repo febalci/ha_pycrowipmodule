@@ -4,6 +4,11 @@ import logging
 import voluptuous as vol
 
 import homeassistant.components.alarm_control_panel as alarm
+from homeassistant.components.alarm_control_panel.const import (
+    SUPPORT_ALARM_ARM_AWAY,
+    SUPPORT_ALARM_ARM_HOME,
+)
+
 from homeassistant.const import (
     ATTR_ENTITY_ID,
     STATE_ALARM_ARMED_AWAY,
@@ -170,3 +175,9 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanel):
         """Send custom keypress."""
         if keypress:
             self.hass.data[DATA_CRW].send_keypress(str(keypress))
+
+    @property
+    def supported_features(self) -> int:
+        """Return the list of supported features."""
+        return SUPPORT_ALARM_ARM_HOME | SUPPORT_ALARM_ARM_AWAY
+
