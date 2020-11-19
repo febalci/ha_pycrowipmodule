@@ -3,7 +3,7 @@ import logging
 
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-from homeassistant.components.switch import SwitchDevice
+from homeassistant.components.switch import SwitchEntity
 from homeassistant.const import STATE_OFF, STATE_ON
 
 from homeassistant.const import (
