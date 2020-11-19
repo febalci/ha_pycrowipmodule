@@ -38,7 +38,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
         devices.append(device)
     async_add_entities(devices)
 
-class CrowIPModuleOutput(CrowIPModuleDevice, SwitchDevice):
+class CrowIPModuleOutput(CrowIPModuleDevice, SwitchEntity):
     """Representation of an Crow IP Module Output Switch."""
 
     def __init__(self, hass, output_number, output_name, info, controller):
