@@ -86,7 +86,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     return True
 
 
-class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanel):
+class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanelEntity):
     """Representation of an Crow IP Module-based alarm panel."""
 
     def __init__(
