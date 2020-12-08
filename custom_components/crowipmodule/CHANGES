@@ -13,8 +13,10 @@ v.0.24
 v.0.25
 - Corrected HA 103 breaking changes made on alarm_control_panel.
 - Outputs controlling and status corrected.
-v.0.26 TODO (NOT DONE YET)
-- When connection goes off; change all entities to 'unavailable'.
+v.0.26
 - When HA restarts; update all entities just after the connection is established.
 - Check network disconnects real-time.
+- ESA waits until STATUS request
+v.0.27 TODO (NOT DONE YET)
+- When connection goes off; change all entities to 'unavailable'.
 - Add the respository to HACS
