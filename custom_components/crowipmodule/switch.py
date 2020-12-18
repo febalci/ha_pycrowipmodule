@@ -25,9 +25,10 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Perform the setup for Crow IP Module  Switch devices."""
-    configured_outputs = discovery_info["outputs"]
     devices = []
+    configured_outputs = discovery_info["outputs"]        
     _LOGGER.debug(str(configured_outputs))
+
 
     if configured_outputs != None:
         for output_num in configured_outputs:
@@ -48,7 +49,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
             hass.data[DATA_CRW],
         )
         devices.append(device)
-        
+    
     async_add_entities(devices)
 
 class CrowIPModuleOutput(CrowIPModuleDevice, SwitchEntity):
@@ -57,7 +58,7 @@ class CrowIPModuleOutput(CrowIPModuleDevice, SwitchEntity):
     def __init__(self, hass, output_number, output_name, info, controller):
         """Initialize the switch"""
         self._output_number = output_number
-        _LOGGER.debug("Setting up switch for system...")
+        _LOGGER.debug("Setting up output switch for system...")
         super().__init__("Crow " + output_name, info, controller)
         self._name = "Crow Output " + output_name
         self._state = STATE_OFF
@@ -95,7 +96,7 @@ class CrowIPModuleOutput(CrowIPModuleDevice, SwitchEntity):
         """Update the output state in HA, if needed."""
         if output is None or int(output) == int(self._output_number):
             self.async_schedule_update_ha_state()
-            _LOGGER.debug("Update output"+str(output))
+            _LOGGER.debug("Update poutput"+str(output))
 
 class CrowIPModuleRelay(CrowIPModuleDevice, SwitchEntity):
     def __init__(self, hass, relay_number,controller):
