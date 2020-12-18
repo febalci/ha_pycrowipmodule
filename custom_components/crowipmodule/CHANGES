@@ -17,6 +17,5 @@ v.0.26
 - When HA restarts; update all entities just after the connection is established.
 - Check network disconnects real-time.
 - ESA waits until STATUS request
-v.0.27 TODO (NOT DONE YET)
-- When connection goes off; change all entities to 'unavailable'.
-- Add the respository to HACS
+v.0.27
+- Added RL1 and RL2 Relays
