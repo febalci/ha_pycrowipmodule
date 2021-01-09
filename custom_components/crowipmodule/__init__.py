@@ -109,7 +109,8 @@ async def async_setup(hass, config):
         """Network failure callback."""
         _LOGGER.error("Could not establish a connection with the Crow Ip Module")
         if not sync_connect.done():
-            sync_connect.set_result(False)
+            hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, stop_crowipmodule)
+            sync_connect.set_result(True)
 
     @callback
     def connected_callback(data):
@@ -197,16 +198,15 @@ async def async_setup(hass, config):
             )
         )
 
-    if outputs:
-        hass.async_create_task(
-            async_load_platform(
-                hass, 
-                "switch", 
-                "crowipmodule", 
-                {CONF_OUTPUTS: outputs}, 
-                config,
-            )
+    hass.async_create_task(
+        async_load_platform(
+            hass, 
+            "switch", 
+            "crowipmodule", 
+            {CONF_OUTPUTS: outputs}, 
+            config,
         )
+    )
 
     return True
 
