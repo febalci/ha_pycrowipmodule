@@ -64,7 +64,7 @@ class CrowIPModuleBinarySensor(CrowIPModuleDevice, BinarySensorEntity):
         return self._zone_type
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the state attributes."""
         return self._info["status"]
 
