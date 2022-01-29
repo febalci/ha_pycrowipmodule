@@ -166,7 +166,7 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanelEntity):
         self.hass.data[DATA_CRW].panic_alarm('')
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the state attributes."""
         return self._info["status"]
 
