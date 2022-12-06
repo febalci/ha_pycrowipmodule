@@ -2,17 +2,17 @@ v.0.22
 - System binary sensors are converted to alarm control panel device attributes.
 - If 'code' configuration is missing in configuration.yaml, then keypad is on in Alarm Panel.
 - 'code' configuration is moved to 'areas' section for area specific code.
-- Corrected some errors.
+- Bugfix: Corrected some errors.
 v.0.23
-- Corrected deepcopy dict, which results area_keypad device attributes to be the same as alarm_control_panel.
-- Corrected alarm trigger updates of both area_keypad and alarm_control_panel.
+- Bugfix: Corrected deepcopy dict, which results area_keypad device attributes to be the same as alarm_control_panel.
+- Bugfix: Corrected alarm trigger updates of both area_keypad and alarm_control_panel.
 v.0.24
 - Removed sensor.area_a_keypad and added sensor.crow_alarm_system; this new sensor has all system related attributes only.
-- Handle trigger based disconnection issue.
-- Corrected some issues.
+- Bugfix: Handle trigger based disconnection issue.
+- Bugfix: Corrected some issues.
 v.0.25
-- Corrected HA 103 breaking changes made on alarm_control_panel.
-- Outputs controlling and status corrected.
+- Bugfix: Corrected HA 103 breaking changes made on alarm_control_panel.
+- Bugfix: Outputs controlling and status corrected.
 v.0.26
 - When HA restarts; update all entities just after the connection is established.
 - Check network disconnects real-time.
@@ -20,6 +20,6 @@ v.0.26
 v.0.27
 - Added RL1 and RL2 Relays
 v.0.28
-- Bug: Removed "loop" from pycrowipmodule as per new Python requirements
+- Bugfix: Removed "loop" from pycrowipmodule as per new Python requirements
 v.0.29
-- Bug: Convert sleep to asytncio sleep in pycrowipmodule
+- Bugfix: Convert sleep to asytncio sleep in pycrowipmodule
