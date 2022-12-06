@@ -19,3 +19,7 @@ v.0.26
 - ESA waits until STATUS request
 v.0.27
 - Added RL1 and RL2 Relays
+v.0.28
+- Bug: Removed "loop" from pycrowipmodule as per new Python requirements
+v.0.29
+- Bug: Convert sleep to asytncio sleep in pycrowipmodule
