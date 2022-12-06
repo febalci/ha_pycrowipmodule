@@ -21,5 +21,6 @@ v.0.27
 - Added RL1 and RL2 Relays
 v.0.28
 - Bugfix: Removed "loop" from pycrowipmodule as per new Python requirements
-v.0.29
-- Bugfix: Convert sleep to asytncio sleep in pycrowipmodule
+v.0.31
+- Bugfix: Convert sleep to asyncio sleep in pycrowipmodule and disarm to async
+- Added SUPPORT_ALARM_TRIGGER for panic alarm (Don't know if it works)
