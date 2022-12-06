@@ -1,4 +1,4 @@
-# Home Assistant Creow IP Module Custom Component
+# Home Assistant Crow IP Module Custom Component
 
 This is a custom component for Crow Runner / Arrowhead AAP 8/16 Home Alarm System IP Module Integration to Home Assistant.
 
