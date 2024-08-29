@@ -1,15 +1,16 @@
 """Crow/AAP IP Module init file"""
+
 import asyncio
 import logging
 
 import voluptuous as vol
 
+from homeassistant.const import CONF_HOST, CONF_TIMEOUT, EVENT_HOMEASSISTANT_STOP
 from homeassistant.core import callback
 import homeassistant.helpers.config_validation as cv
-from homeassistant.const import EVENT_HOMEASSISTANT_STOP, CONF_TIMEOUT, CONF_HOST
-from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.helpers.dispatcher import async_dispatcher_send
+from homeassistant.helpers.entity import Entity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -54,7 +55,7 @@ ZONE_SCHEMA = vol.Schema(
 AREA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_AREANAME): cv.string,
-        vol.Optional(CONF_CODE, default=''): cv.string,
+        vol.Optional(CONF_CODE, default=""): cv.string,
     }
 )
 
@@ -78,13 +79,14 @@ CONFIG_SCHEMA = vol.Schema(
     extra=vol.ALLOW_EXTRA,
 )
 
+
 async def async_setup(hass, config):
     """Set up for Crow IP Module."""
     from pycrowipmodule import CrowIPAlarmPanel
 
     conf = config.get(DOMAIN)
     host = conf.get(CONF_HOST)
-    code = '0000'
+    code = "0000"
     port = conf.get(CONF_CROW_PORT)
     keep_alive = conf.get(CONF_CROW_KEEPALIVE)
     zones = conf.get(CONF_ZONES)
@@ -134,8 +136,8 @@ async def async_setup(hass, config):
 
     @callback
     def system_updated_callback(data):
-        #Handle system updates.
-        _LOGGER.debug('Crow Ip Module sent a system update event. Updating system...')
+        # Handle system updates.
+        _LOGGER.debug("Crow Ip Module sent a system update event. Updating system...")
         async_dispatcher_send(hass, SIGNAL_SYSTEM_UPDATE, data)
 
     @callback
@@ -149,7 +151,6 @@ async def async_setup(hass, config):
         """Shutdown Crow IP Module connection and thread on exit."""
         _LOGGER.info("Shutting down CrowIpModule")
         controller.stop()
-
 
     controller.callback_zone_state_change = zones_updated_callback
     controller.callback_area_state_change = areas_updated_callback
@@ -186,24 +187,24 @@ async def async_setup(hass, config):
                 config,
             )
         )
-        
+
     if zones:
         hass.async_create_task(
             async_load_platform(
-                hass, 
-                "binary_sensor", 
-                "crowipmodule", 
-                {CONF_ZONES: zones}, 
+                hass,
+                "binary_sensor",
+                "crowipmodule",
+                {CONF_ZONES: zones},
                 config,
             )
         )
 
     hass.async_create_task(
         async_load_platform(
-            hass, 
-            "switch", 
-            "crowipmodule", 
-            {CONF_OUTPUTS: outputs}, 
+            hass,
+            "switch",
+            "crowipmodule",
+            {CONF_OUTPUTS: outputs},
             config,
         )
     )
@@ -229,4 +230,3 @@ class CrowIPModuleDevice(Entity):
     def should_poll(self):
         """No polling needed."""
         return False
-
