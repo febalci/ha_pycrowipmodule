@@ -1,11 +1,11 @@
 """Support for Crow Alarm IP Module."""
-import datetime
+
 import logging
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
-from homeassistant.core import callback
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-from homeassistant.util import dt as dt_util
+from homeassistant.helpers.typing import ConfigType
 
 from . import (
     CONF_ZONENAME,
@@ -18,7 +18,10 @@ from . import (
 
 _LOGGER = logging.getLogger(__name__)
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+
+async def async_setup_platform(
+    hass: HomeAssistant, config: ConfigType, async_add_entities, discovery_info=None
+) -> None:
     """Set up the Crow binary sensor devices."""
     configured_zones = discovery_info["zones"]
 
@@ -41,7 +44,9 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 class CrowIPModuleBinarySensor(CrowIPModuleDevice, BinarySensorEntity):
     """Representation of an Crow IP Module binary sensor."""
 
-    def __init__(self, hass, zone_number, zone_name, zone_type, info, controller):
+    def __init__(
+        self, hass: HomeAssistant, zone_number, zone_name, zone_type, info, controller
+    ) -> None:
         """Initialize the binary_sensor."""
         self._zone_type = zone_type
         self._zone_number = zone_number

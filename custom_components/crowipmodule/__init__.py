@@ -1,16 +1,18 @@
-"""Crow/AAP IP Module init file"""
+"""Crow/AAP IP Module init file."""
 
 import asyncio
 import logging
 
+from pycrowipmodule import CrowIPAlarmPanel
 import voluptuous as vol
 
 from homeassistant.const import CONF_HOST, CONF_TIMEOUT, EVENT_HOMEASSISTANT_STOP
-from homeassistant.core import callback
+from homeassistant.core import HomeAssistant, callback
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.typing import ConfigType
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -80,9 +82,8 @@ CONFIG_SCHEMA = vol.Schema(
 )
 
 
-async def async_setup(hass, config):
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> None:
     """Set up for Crow IP Module."""
-    from pycrowipmodule import CrowIPAlarmPanel
 
     conf = config.get(DOMAIN)
     host = conf.get(CONF_HOST)
@@ -125,25 +126,25 @@ async def async_setup(hass, config):
     @callback
     def zones_updated_callback(data):
         """Handle zone updates."""
-        _LOGGER.debug("Crow Ip Module sent a zone update event. Updating zones...")
+        _LOGGER.debug("Crow Ip Module sent a zone update event. Updating zones")
         async_dispatcher_send(hass, SIGNAL_ZONE_UPDATE, data)
 
     @callback
     def areas_updated_callback(data):
         """Handle area changes thrown by crow (including alarms)."""
-        _LOGGER.debug("The Crow Ip Module sent an area update event. Updating areas...")
+        _LOGGER.debug("The Crow Ip Module sent an area update event. Updating areas")
         async_dispatcher_send(hass, SIGNAL_AREA_UPDATE, data)
 
     @callback
     def system_updated_callback(data):
         # Handle system updates.
-        _LOGGER.debug("Crow Ip Module sent a system update event. Updating system...")
+        _LOGGER.debug("Crow Ip Module sent a system update event. Updating system")
         async_dispatcher_send(hass, SIGNAL_SYSTEM_UPDATE, data)
 
     @callback
     def output_updated_callback(data):
         """Handle output updates."""
-        _LOGGER.debug("Crow Ip Module sent an output update event. Updating output...")
+        _LOGGER.debug("Crow Ip Module sent an output update event. Updating output")
         async_dispatcher_send(hass, SIGNAL_OUTPUT_UPDATE, data)
 
     @callback
@@ -160,7 +161,7 @@ async def async_setup(hass, config):
     controller.callback_connected = connected_callback
     controller.callback_login_timeout = connection_fail_callback
 
-    _LOGGER.info("Start CrowIpModule.")
+    _LOGGER.info("Start CrowIpModule")
     controller.start()
 
     result = await sync_connect
@@ -215,7 +216,7 @@ async def async_setup(hass, config):
 class CrowIPModuleDevice(Entity):
     """Representation of an Crow IP Module."""
 
-    def __init__(self, name, info, controller):
+    def __init__(self, name, info, controller) -> None:
         """Initialize the device."""
         self._controller = controller
         self._info = info

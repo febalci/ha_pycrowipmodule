@@ -1,26 +1,20 @@
 """Support for Crow IP Module sensors (shows panel info)."""
+
 import logging
 
-from homeassistant.core import callback
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.typing import ConfigType
 
-from . import (
-    CONF_AREANAME,
-    DATA_CRW,
-    AREA_SCHEMA,
-    SIGNAL_KEYPAD_UPDATE,
-    SIGNAL_AREA_UPDATE,
-    SIGNAL_SYSTEM_UPDATE,
-    CrowIPModuleDevice,
-)
-
-import copy 
+from . import DATA_CRW, SIGNAL_SYSTEM_UPDATE, CrowIPModuleDevice
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+async def async_setup_platform(
+    hass: HomeAssistant, config: ConfigType, async_add_entities, discovery_info=None
+) -> None:
     """Perform the setup for Crow IP Module  Sensor devices."""
     devices = []
     device = CrowIPModuleSensor(
@@ -35,10 +29,10 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 class CrowIPModuleSensor(CrowIPModuleDevice, Entity):
     """Representation of an Crow IP Module keypad."""
 
-    def __init__(self, hass, info, controller):
+    def __init__(self, hass: HomeAssistant, info, controller) -> None:
         """Initialize the sensor."""
         self._icon = "mdi:alarm"
-        _LOGGER.debug("Setting up sensor for system...")
+        _LOGGER.debug("Setting up sensor for system")
         super().__init__("Crow Alarm System", info, controller)
 
     async def async_added_to_hass(self):
@@ -54,11 +48,11 @@ class CrowIPModuleSensor(CrowIPModuleDevice, Entity):
     def state(self):
         """Return the overall state."""
         return self._info["status"]["mains"]
- 
+
     @property
     def extra_state_attributes(self):
         """Return the state attributes."""
-        return self._info['status']
+        return self._info["status"]
 
     @callback
     def _update_callback(self, system):

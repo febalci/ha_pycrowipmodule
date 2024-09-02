@@ -1,4 +1,4 @@
-"""Support for Crow IP Module-based alarm control panel"""
+"""Support for Crow IP Module-based alarm control panel."""
 
 import logging
 
@@ -19,9 +19,10 @@ from homeassistant.const import (
     STATE_ALARM_TRIGGERED,
     STATE_UNKNOWN,
 )
-from homeassistant.core import callback
+from homeassistant.core import HomeAssistant, callback
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from homeassistant.helpers.typing import ConfigType
 
 from . import (
     AREA_SCHEMA,
@@ -45,7 +46,9 @@ ALARM_KEYPRESS_SCHEMA = vol.Schema(
 )
 
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+async def async_setup_platform(
+    hass: HomeAssistant, config: ConfigType, async_add_entities, discovery_info=None
+):
     """Perform the setup for Crow IP Module alarm panels."""
     configured_areas = discovery_info["areas"]
     # config['crowipmodule']['zones'][i]['name']
@@ -90,7 +93,9 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 class CrowIPModuleAlarm(CrowIPModuleDevice, AlarmControlPanelEntity):
     """Representation of an Crow IP Module-based alarm panel."""
 
-    def __init__(self, hass, area_number, alarm_name, code, info, controller):
+    def __init__(
+        self, hass: HomeAssistant, area_number, alarm_name, code, info, controller
+    ) -> None:
         """Initialize the alarm panel."""
         if area_number == 1:
             self._area_number = "A"
@@ -112,14 +117,19 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, AlarmControlPanelEntity):
         if area is None or area == self._area_number:
             self.async_schedule_update_ha_state()
 
-    """Required to show up Keypad on alarm panel"""
+    # """Required to show up Keypad on alarm panel"""
 
     @property
-    def code_format(self):
+    def code_format(self) -> CodeFormat | None:
         """Regex for code format or None if no code is required."""
         if self._code != "":
             return None
         return CodeFormat.NUMBER
+
+    @property
+    def code_arm_required(self) -> bool:
+        """Whether the code is required for arm actions."""
+        return False
 
     @property
     def state(self):
@@ -132,9 +142,10 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, AlarmControlPanelEntity):
             state = STATE_ALARM_ARMED_AWAY
         elif self._info["status"]["stay_armed"]:
             state = STATE_ALARM_ARMED_HOME
-        elif self._info["status"]["exit_delay"]:
-            state = STATE_ALARM_PENDING
-        elif self._info["status"]["stay_exit_delay"]:
+        elif (
+            self._info["status"]["exit_delay"]
+            or self._info["status"]["stay_exit_delay"]
+        ):
             state = STATE_ALARM_PENDING
         elif self._info["status"]["disarmed"]:
             state = STATE_ALARM_DISARMED
@@ -158,7 +169,8 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, AlarmControlPanelEntity):
             self.hass.data[DATA_CRW].send_keypress(str(code))
         else:
             self.hass.data[DATA_CRW].send_keypress(str(self._code))
-#            self.hass.data[DATA_CRW].arm_away()
+
+    #            self.hass.data[DATA_CRW].arm_away()
 
     async def async_alarm_trigger(self, code=None):
         """Alarm trigger command. Will be used to trigger a panic alarm."""
