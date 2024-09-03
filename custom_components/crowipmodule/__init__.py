@@ -20,14 +20,18 @@ DOMAIN = "crowipmodule"
 
 DATA_CRW = "crowipmodule"
 
-CONF_CODE = "code"
 CONF_CROW_KEEPALIVE = "keepalive_interval"
 CONF_CROW_PORT = "port"
-CONF_AREANAME = "name"
+
 CONF_AREAS = "areas"
-CONF_ZONENAME = "name"
+CONF_AREANAME = "name"
+CONF_CODE = "code"
+CONF_CODE_ARM_REQUIRED = "code_arm_required"
+
 CONF_ZONES = "zones"
+CONF_ZONENAME = "name"
 CONF_ZONETYPE = "type"
+
 CONF_OUTPUTS = "outputs"
 CONF_OUTPUTNAME = "name"
 
@@ -47,6 +51,7 @@ OUTPUT_SCHEMA = vol.Schema(
         vol.Required(CONF_OUTPUTNAME): cv.string,
     }
 )
+
 ZONE_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_ZONENAME): cv.string,
@@ -58,9 +63,9 @@ AREA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_AREANAME): cv.string,
         vol.Optional(CONF_CODE, default=""): cv.string,
+        vol.Optional(CONF_CODE_ARM_REQUIRED, default=True): cv.boolean,
     }
 )
-
 
 CONFIG_SCHEMA = vol.Schema(
     {

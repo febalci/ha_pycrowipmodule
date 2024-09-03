@@ -6,6 +6,7 @@ crowipmodule:
   areas:
     1:
       name: 'Home'
+      code_arm_required: False
     2:
       name: 'None'
       code: '0001'

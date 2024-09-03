@@ -28,6 +28,7 @@ from . import (
     AREA_SCHEMA,
     CONF_AREANAME,
     CONF_CODE,
+    CONF_CODE_ARM_REQUIRED,
     DATA_CRW,
     SIGNAL_AREA_UPDATE,
     SIGNAL_KEYPAD_UPDATE,
@@ -51,6 +52,7 @@ async def async_setup_platform(
 ):
     """Perform the setup for Crow IP Module alarm panels."""
     configured_areas = discovery_info["areas"]
+
     # config['crowipmodule']['zones'][i]['name']
     devices = []
     for part_num in configured_areas:
@@ -60,6 +62,7 @@ async def async_setup_platform(
             part_num,
             device_config_data[CONF_AREANAME],
             device_config_data[CONF_CODE],
+            device_config_data[CONF_CODE_ARM_REQUIRED],
             hass.data[DATA_CRW].area_state[part_num],
             hass.data[DATA_CRW],
         )
@@ -94,7 +97,14 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, AlarmControlPanelEntity):
     """Representation of an Crow IP Module-based alarm panel."""
 
     def __init__(
-        self, hass: HomeAssistant, area_number, alarm_name, code, info, controller
+        self,
+        hass: HomeAssistant,
+        area_number,
+        alarm_name,
+        code,
+        code_arm_required,
+        info,
+        controller,
     ) -> None:
         """Initialize the alarm panel."""
         if area_number == 1:
@@ -102,6 +112,7 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, AlarmControlPanelEntity):
         else:
             self._area_number = "B"
         self._code = code
+        self._code_arm_required = code_arm_required
 
         _LOGGER.debug("Setting up alarm: %s", alarm_name)
         super().__init__(alarm_name, info, controller)
@@ -129,7 +140,7 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, AlarmControlPanelEntity):
     @property
     def code_arm_required(self) -> bool:
         """Whether the code is required for arm actions."""
-        return False
+        return self._code_arm_required
 
     @property
     def state(self):
