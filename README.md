@@ -10,7 +10,7 @@ see [HA community thread][ha_community_thread] for details
   - AAP Elite ESL-2 with ESL-2 APP POD
 - Firmware for Ip Module or APP POD
   - `Ver 2.10.3628 2017 Oct 20 09:48:43`
-  Contact AAP Support to request exact Firmware version [email][aap_support]
+  Contact AAP Support to request exact Firmware version [email](mailto:tech@aap.co.nz)
 
 ## Installation
 
@@ -72,4 +72,3 @@ crowipmodule:
 ```
 
 [ha_community_thread]: [https://community.home-assistant.io/t/custom-component-crow-runner-arrowhead-aap-8-16-alarm-ip-module/130588?u=febalci]
-[aap_support]: [mailto:tech@aap.co.nz]
