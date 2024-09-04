@@ -1,20 +1,21 @@
 crowipmodule:
-  host: 192.168.1.10
+  host: !secret crowip_host
   port: 5002
   keepalive_interval: 60
   timeout: 20
   areas:
     1:
-      name: 'Home'
+      name: 'Away'
+      code: !secret crowip_arm_code
       code_arm_required: False
     2:
-      name: 'None'
-      code: '0001'
+      name: 'Home'
+      code: !secret crowip_arm_code
   outputs:
     3:
-      name: 'Door 1'
+      name: 'Gate'
     4:
-      name: 'Smoke Detector Power'
+      name: 'Garage Door'
   zones:
     1:
       name: 'Entrance'
