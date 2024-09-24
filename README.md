@@ -27,10 +27,10 @@ You will need to install the crowipmodule manually.
 
 #### Cloning repo
 - use Terminal AddOn or ssh to connect to HomeAssistant
-- cd into config/custom_components folder\
-  `cd config/custom_components`
 - checkout ha_pycrowipmodule into config directory\
   `git clone https://github.com/febalci/ha_pycrowipmodule`
+- cd into config/custom_components folder\
+  `cd config/custom_components`
 - create symlink for crowipmodule\
   `ln -s ../ha_pycrowipmodule/custom_components/crowipmodule crowipmodule`
 
