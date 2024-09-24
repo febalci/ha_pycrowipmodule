@@ -2,7 +2,7 @@
 
 This is a custom component for Crow Runner / Arrowhead AAP 8/16 Home Alarm System IP Module Integration to Home Assistant.
 
-see [HA community thread][ha_community_thread] for details
+see [HA community thread](https://community.home-assistant.io/t/custom-component-crow-runner-arrowhead-aap-8-16-alarm-ip-module/130588/23) for details
 
 ## Requirements:
 - Hardware either of thoose are reported working
