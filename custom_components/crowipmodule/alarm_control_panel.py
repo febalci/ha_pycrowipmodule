@@ -1,15 +1,15 @@
-"""Support for Crow IP Module-based alarm control panel"""
+"""Support for Crow IP Module-based alarm control panel."""
+
 import logging
 
 import voluptuous as vol
 
-import homeassistant.components.alarm_control_panel as alarm
-from homeassistant.components.alarm_control_panel.const import (
-    SUPPORT_ALARM_ARM_AWAY,
-    SUPPORT_ALARM_ARM_HOME,
-    SUPPORT_ALARM_TRIGGER,
+from homeassistant.components.alarm_control_panel import (
+    DOMAIN,
+    AlarmControlPanelEntity,
+    AlarmControlPanelEntityFeature,
+    CodeFormat,
 )
-
 from homeassistant.const import (
     ATTR_ENTITY_ID,
     STATE_ALARM_ARMED_AWAY,
@@ -19,17 +19,19 @@ from homeassistant.const import (
     STATE_ALARM_TRIGGERED,
     STATE_UNKNOWN,
 )
-from homeassistant.core import callback
+from homeassistant.core import HomeAssistant, callback
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from homeassistant.helpers.typing import ConfigType
 
 from . import (
-    CONF_CODE,
-    CONF_AREANAME,
-    DATA_CRW,
     AREA_SCHEMA,
-    SIGNAL_KEYPAD_UPDATE,
+    CONF_AREANAME,
+    CONF_CODE,
+    CONF_CODE_ARM_REQUIRED,
+    DATA_CRW,
     SIGNAL_AREA_UPDATE,
+    SIGNAL_KEYPAD_UPDATE,
     CrowIPModuleDevice,
 )
 
@@ -45,9 +47,12 @@ ALARM_KEYPRESS_SCHEMA = vol.Schema(
 )
 
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+async def async_setup_platform(
+    hass: HomeAssistant, config: ConfigType, async_add_entities, discovery_info=None
+):
     """Perform the setup for Crow IP Module alarm panels."""
     configured_areas = discovery_info["areas"]
+
     # config['crowipmodule']['zones'][i]['name']
     devices = []
     for part_num in configured_areas:
@@ -57,6 +62,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
             part_num,
             device_config_data[CONF_AREANAME],
             device_config_data[CONF_CODE],
+            device_config_data[CONF_CODE_ARM_REQUIRED],
             hass.data[DATA_CRW].area_state[part_num],
             hass.data[DATA_CRW],
         )
@@ -78,7 +84,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
             device.async_alarm_keypress(keypress)
 
     hass.services.async_register(
-        alarm.DOMAIN,
+        DOMAIN,
         SERVICE_ALARM_KEYPRESS,
         alarm_keypress_handler,
         schema=ALARM_KEYPRESS_SCHEMA,
@@ -87,17 +93,26 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     return True
 
 
-class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanelEntity):
+class CrowIPModuleAlarm(CrowIPModuleDevice, AlarmControlPanelEntity):
     """Representation of an Crow IP Module-based alarm panel."""
 
     def __init__(
-        self, hass, area_number, alarm_name, code, info, controller):
+        self,
+        hass: HomeAssistant,
+        area_number,
+        alarm_name,
+        code,
+        code_arm_required,
+        info,
+        controller,
+    ) -> None:
         """Initialize the alarm panel."""
-        if area_number==1:
-            self._area_number = 'A'
+        if area_number == 1:
+            self._area_number = "A"
         else:
-            self._area_number = 'B'
+            self._area_number = "B"
         self._code = code
+        self._code_arm_required = code_arm_required
 
         _LOGGER.debug("Setting up alarm: %s", alarm_name)
         super().__init__(alarm_name, info, controller)
@@ -105,9 +120,7 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanelEntity):
     async def async_added_to_hass(self):
         """Register callbacks."""
         async_dispatcher_connect(self.hass, SIGNAL_KEYPAD_UPDATE, self._update_callback)
-        async_dispatcher_connect(
-            self.hass, SIGNAL_AREA_UPDATE, self._update_callback
-        )
+        async_dispatcher_connect(self.hass, SIGNAL_AREA_UPDATE, self._update_callback)
 
     @callback
     def _update_callback(self, area):
@@ -115,13 +128,19 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanelEntity):
         if area is None or area == self._area_number:
             self.async_schedule_update_ha_state()
 
-    """Required to show up Keypad on alarm panel"""
+    # """Required to show up Keypad on alarm panel"""
+
     @property
-    def code_format(self):
+    def code_format(self) -> CodeFormat | None:
         """Regex for code format or None if no code is required."""
-        if self._code != '':
+        if self._code != "":
             return None
-        return alarm.FORMAT_NUMBER
+        return CodeFormat.NUMBER
+
+    @property
+    def code_arm_required(self) -> bool:
+        """Whether the code is required for arm actions."""
+        return self._code_arm_required
 
     @property
     def state(self):
@@ -134,9 +153,10 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanelEntity):
             state = STATE_ALARM_ARMED_AWAY
         elif self._info["status"]["stay_armed"]:
             state = STATE_ALARM_ARMED_HOME
-        elif self._info["status"]["exit_delay"]:
-            state = STATE_ALARM_PENDING
-        elif self._info["status"]["stay_exit_delay"]:
+        elif (
+            self._info["status"]["exit_delay"]
+            or self._info["status"]["stay_exit_delay"]
+        ):
             state = STATE_ALARM_PENDING
         elif self._info["status"]["disarmed"]:
             state = STATE_ALARM_DISARMED
@@ -160,11 +180,12 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanelEntity):
             self.hass.data[DATA_CRW].send_keypress(str(code))
         else:
             self.hass.data[DATA_CRW].send_keypress(str(self._code))
-#            self.hass.data[DATA_CRW].arm_away()
+
+    #            self.hass.data[DATA_CRW].arm_away()
 
     async def async_alarm_trigger(self, code=None):
         """Alarm trigger command. Will be used to trigger a panic alarm."""
-        self.hass.data[DATA_CRW].panic_alarm('')
+        self.hass.data[DATA_CRW].panic_alarm("")
 
     @property
     def extra_state_attributes(self):
@@ -180,4 +201,8 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, alarm.AlarmControlPanelEntity):
     @property
     def supported_features(self) -> int:
         """Return the list of supported features."""
-        return SUPPORT_ALARM_ARM_HOME | SUPPORT_ALARM_ARM_AWAY | SUPPORT_ALARM_TRIGGER
+        return (
+            AlarmControlPanelEntityFeature.ARM_HOME
+            | AlarmControlPanelEntityFeature.ARM_AWAY
+            | AlarmControlPanelEntityFeature.TRIGGER
+        )

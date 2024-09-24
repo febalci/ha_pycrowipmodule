@@ -24,3 +24,7 @@ v.0.28
 v.0.31
 - Bugfix: Convert sleep to asyncio sleep in pycrowipmodule and disarm to async
 - Added SUPPORT_ALARM_TRIGGER for panic alarm (Don't know if it works)
+v.0.32
+- fix HA deprecation warnings
+- updated pycrowipmodule to 0.31b0
+- add code_arm_required to config options
