@@ -3,7 +3,7 @@
     "name": "Crow/AAP Alarm IP Module",
     "documentation": "https://github.com/febalci/ha_pycrowipmodule",
     "requirements": [
-        "pycrowipmodule==0.31b0"
+        "git+https://github.com/dan-s-github/pycrowipmodule.git@dev#pycrowipmodule"
       ],
     "dependencies": [],
     "codeowners": [
