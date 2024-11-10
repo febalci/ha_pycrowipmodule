@@ -2,7 +2,7 @@
 
 This is a custom component for Crow Runner / Arrowhead AAP 8/16 Home Alarm System IP Module Integration to Home Assistant.
 
-see [HA community thread](https://community.home-assistant.io/t/custom-component-crow-runner-arrowhead-aap-8-16-alarm-ip-module/130588/23) for details
+see [HA community thread][ha_community_thread] for details
 
 ## Requirements:
 - Hardware either of thoose are reported working
@@ -12,7 +12,21 @@ see [HA community thread](https://community.home-assistant.io/t/custom-component
   - `Ver 2.10.3628 2017 Oct 20 09:48:43`
   Contact AAP Support to request exact Firmware version [email](mailto:tech@aap.co.nz)
 
-## Installation
+## Installation using HACS
+
+Follow steps described [here][hacs_custom_repository] to add [this repository][repo_root] as custom integration
+
+Repository: https://github.com/febalci/ha_pycrowipmodule
+
+Type: Integration
+
+You should see this after adding the repository
+
+![hacs_custom]
+
+
+
+## Manual Installation
 
 You will need to install the crowipmodule manually.
 
@@ -71,4 +85,7 @@ crowipmodule:
       ...
 ```
 
-[ha_community_thread]: [https://community.home-assistant.io/t/custom-component-crow-runner-arrowhead-aap-8-16-alarm-ip-module/130588?u=febalci]
+[repo_root]: https://github.com/febalci/ha_pycrowipmodule
+[ha_community_thread]: https://community.home-assistant.io/t/custom-component-crow-runner-arrowhead-aap-8-16-alarm-ip-module/130588/23
+[hacs_custom_repository]: https://hacs.xyz/docs/faq/custom_repositories/
+[hacs_custom]: hacs_custom.png
