@@ -30,4 +30,4 @@ v.0.32
 - add code_arm_required to config options
 v.0.33
 - fix HA deprecation warnings
-- update pycrowipmodule to 0.32b0 which also fixes warnings
+- update pycrowipmodule to 0.32 which also fixes warnings
