@@ -12,8 +12,7 @@ from homeassistant.components.alarm_control_panel import (
     CodeFormat,
 )
 from homeassistant.const import (
-    ATTR_ENTITY_ID,
-    STATE_UNKNOWN,
+    ATTR_ENTITY_ID
 )
 from homeassistant.core import HomeAssistant, callback
 import homeassistant.helpers.config_validation as cv
@@ -139,9 +138,9 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, AlarmControlPanelEntity):
         return self._code_arm_required
 
     @property
-    def state(self):
+    def alarm_state(self) -> AlarmControlPanelState | None:
         """Return the state of the device."""
-        state = AlarmControlPanelState.UNKNOWN
+        state = None
 
         if self._info["status"]["alarm"]:
             state = AlarmControlPanelState.TRIGGERED
@@ -155,7 +154,7 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, AlarmControlPanelEntity):
         ):
             state = AlarmControlPanelState.PENDING
         elif self._info["status"]["disarmed"]:
-            state = AlarmControlPanelState._DISARMED
+            state = AlarmControlPanelState.DISARMED
         return state
 
     async def async_alarm_disarm(self, code=None):
