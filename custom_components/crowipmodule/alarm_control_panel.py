@@ -141,7 +141,7 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, AlarmControlPanelEntity):
     @property
     def state(self):
         """Return the state of the device."""
-        state = STATE_UNKNOWN
+        state = AlarmControlPanelState.UNKNOWN
 
         if self._info["status"]["alarm"]:
             state = AlarmControlPanelState.TRIGGERED
