@@ -8,16 +8,11 @@ from homeassistant.components.alarm_control_panel import (
     DOMAIN,
     AlarmControlPanelEntity,
     AlarmControlPanelEntityFeature,
+    AlarmControlPanelState,
     CodeFormat,
 )
 from homeassistant.const import (
-    ATTR_ENTITY_ID,
-    STATE_ALARM_ARMED_AWAY,
-    STATE_ALARM_ARMED_HOME,
-    STATE_ALARM_DISARMED,
-    STATE_ALARM_PENDING,
-    STATE_ALARM_TRIGGERED,
-    STATE_UNKNOWN,
+    ATTR_ENTITY_ID
 )
 from homeassistant.core import HomeAssistant, callback
 import homeassistant.helpers.config_validation as cv
@@ -143,23 +138,23 @@ class CrowIPModuleAlarm(CrowIPModuleDevice, AlarmControlPanelEntity):
         return self._code_arm_required
 
     @property
-    def state(self):
+    def alarm_state(self) -> AlarmControlPanelState | None:
         """Return the state of the device."""
-        state = STATE_UNKNOWN
+        state = None
 
         if self._info["status"]["alarm"]:
-            state = STATE_ALARM_TRIGGERED
+            state = AlarmControlPanelState.TRIGGERED
         elif self._info["status"]["armed"]:
-            state = STATE_ALARM_ARMED_AWAY
+            state = AlarmControlPanelState.ARMED_AWAY
         elif self._info["status"]["stay_armed"]:
-            state = STATE_ALARM_ARMED_HOME
+            state = AlarmControlPanelState.ARMED_HOME
         elif (
             self._info["status"]["exit_delay"]
             or self._info["status"]["stay_exit_delay"]
         ):
-            state = STATE_ALARM_PENDING
+            state = AlarmControlPanelState.PENDING
         elif self._info["status"]["disarmed"]:
-            state = STATE_ALARM_DISARMED
+            state = AlarmControlPanelState.DISARMED
         return state
 
     async def async_alarm_disarm(self, code=None):
